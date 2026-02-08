@@ -79,25 +79,14 @@ window.saveToCloud = async () => {
     try {
         await setDoc(doc(db, "users", uid), data);
         console.log(`Saved to Firestore: users/${uid}`);
-        if (btnUseDefaults) {
-            btnUseDefaults.innerHTML = "클라우드 저장 완료 ☁️";
-            setTimeout(() => {
-                if (btnUseDefaults) btnUseDefaults.innerHTML = originalText;
-            }, 2000); // Revert after 2 seconds
-        }
+        if (btnUseDefaults) btnUseDefaults.innerHTML = "저장 완료! ✅";
     } catch (e) {
         console.error("Cloud Save Error:", e);
+        // Only alert if it's NOT a permission error (or maybe just log it)
+        // User asked to be silent if success, but alert if fail.
+        // If permission error persists despite auth, we should know.
         if (e.code === 'permission-denied') {
             console.warn("Permission denied despite auth. Check Firestore Rules.");
-            // alert("저장 권한 오류: 잠시 후 다시 시도해주세요."); // Removed alert
-            if (btnUseDefaults) {
-                btnUseDefaults.innerHTML = "저장 권한 오류 🚫";
-                setTimeout(() => {
-                    if (btnUseDefaults) btnUseDefaults.innerHTML = originalText;
-                }, 3000);
-            }
-        } else {
-            // alert(`클라우드 저장 실패: ${e.message}`); // Removed alert
             if (btnUseDefaults) {
                 btnUseDefaults.innerHTML = `저장 실패: ${e.message.substring(0, 20)}... ❌`;
                 setTimeout(() => {
