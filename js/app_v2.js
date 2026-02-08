@@ -401,7 +401,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Mode Toggle Handler
         if (toggleMode) {
-            toggleMode.addEventListener('change', (e) => {
+            const handleModeChange = (e) => {
                 const isTradingSheet = e.target.checked;
 
                 if (isTradingSheet) {
@@ -497,15 +497,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         btnUseDefaults.style.display = 'none'; // Force hide
                     }
                     // Only show Warehouse/Saved toggles if they exist
-                    if (toggleWarehouse && toggleWarehouse.parentElement) toggleWarehouse.parentElement.style.display = '';
-                    if (toggleSaved && toggleSaved.parentElement) toggleSaved.parentElement.style.display = '';
-
-                    // Only Show Saved Wrapper IF Checkbox is Checked
-                    if (savedStratWrapper) {
-                        savedStratWrapper.style.display = toggleSaved.checked ? 'block' : 'none';
-                        if (!toggleSaved.checked) savedStratWrapper.classList.add('hidden');
-                        else savedStratWrapper.classList.remove('hidden');
-                    }
+                    if (toggleWarehouse && toggleWarehouse.parentElement) toggleWarehouse.parentElement.style.display = 'flex'; // Or original display
+                    if (toggleSaved && toggleSaved.parentElement) toggleSaved.parentElement.style.display = 'flex';
+                    if (savedStratWrapper) savedStratWrapper.style.display = 'block';
 
                     // 2. Hide "Seed/Cash Change" Buttons
                     if (document.getElementById('btnInjSeed')) document.getElementById('btnInjSeed').classList.add('hidden');
@@ -519,7 +513,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     // 4. RESET PARAMS TO DEFAULTS
                     resetParamsToHardcodedDefaults();
                 }
-            });
+            };
+
+            toggleMode.addEventListener('change', handleModeChange);
+
+            // Initialization Check: Ensure UI matches Checkbox state on Reload
+            if (toggleMode.checked) {
+                handleModeChange({ target: toggleMode });
+            }
         }
 
         // "Use" Button Handler (Legacy removed, using shared saveDefaults below)
